@@ -1,9 +1,7 @@
-# import correct_map as cm 
-# import luac2psc as l2p 
-# import psc2sc as p2s 
 import utils 
 import argparse
 import concurrent.futures
+from tqdm import tqdm
 
 
 thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=utils.get_config("thread_count"))
@@ -22,7 +20,7 @@ def banner():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     #disa_group = parser.add_mutually_exclusive_group(required=True)
-    disc_group = parser.add_mutually_exclusive_group(required=True)
+    disc_group = parser.add_mutually_exclusive_group()
 
     parser.add_argument('-fs_dir', '-d', type=str, help="firm filesystem directory", required=True)
 
@@ -40,21 +38,31 @@ if __name__ == "__main__":
     files = utils.get_lua_files(args.fs_dir)
 
     # step1. convert bytecode 
+    print("step1. convert bytecode")
     tasks = [thread_pool.submit(utils.convs[args.dev_name], file) for file in files]
-    concurrent.futures.wait(tasks)
+    for _ in tqdm(concurrent.futures.as_completed(tasks), total=len(tasks)):
+        pass
+    #concurrent.futures.wait(tasks)
     
     # step2. generate lua pseudocode
+    print("step2. generate lua pseudocode")
     tasks = [thread_pool.submit(utils.gen_psc_unluac, file) for file in files]
-    concurrent.futures.wait(tasks)
+    for _ in tqdm(concurrent.futures.as_completed(tasks), total=len(tasks)):
+        pass
     
     # step3. generate lua source code
+    print("step3. generate lua source code")
+    '''
+    [TODO] fill fields in config.yaml first.
+    '''
     if args.use_chat:
-        print("chat not acc")
+        tasks = [thread_pool.submit(utils.disc_luac, file) for file in files]
+        for _ in tqdm(concurrent.futures.as_completed(tasks), total=len(tasks)):
+            pass
+
     else:
         print("script not acc")
     
-    # step4. scan apis specifically XM
-    #utils.get_apis(args.fs_dir, args.dev_name)
 
 
 

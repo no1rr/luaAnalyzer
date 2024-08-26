@@ -1,0 +1,6 @@
+construct==2.10.70
+langchain==0.2.12
+langchain_openai==0.1.21
+PyYAML==6.0.2
+Requests==2.32.3
+tqdm==4.66.5

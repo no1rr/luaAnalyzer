@@ -1,8 +1,8 @@
 # for gpt
-base_url: 
-api_key: 
-model: gpt-3.5-turbo
+base_url: private
+api_key: private
+model: private
 
 proxy: 127.0.0.1:7890
 
-thread_count: 16
+thread_count: 32
