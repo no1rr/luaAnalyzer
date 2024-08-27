@@ -147,7 +147,7 @@ LuaDatatype = Enum(Byte,
                    LUA_TFUNCTION=6,
                    LUA_TUSERDATA=7,
                    LUA_TTHREAD=8,
-                   LUA_TPLINKDATA=9)
+                   LUA_TINT=9)
 
 
 class LuaDatatypeAdapter(Adapter):
@@ -175,7 +175,7 @@ Constant = ConstantAdapter(Struct(
     "data_type" / LuaDatatypeAdapter(Byte),
     "data" / Switch(this.data_type,
                     {"LUA_TNIL": Pass, "LUA_TBOOLEAN": Flag,
-                     "LUA_TNUMBER": LazyBound(lambda: LuaNumber), "LUA_TSTRING": String, "LUA_TPLINKDATA": Int32ul})
+                     "LUA_TNUMBER": LazyBound(lambda: LuaNumber), "LUA_TSTRING": String, "LUA_TINT": Int32ul})
 ))
 
 Constants = Struct(
