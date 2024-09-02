@@ -4,10 +4,11 @@ result may not be correct.
 
 ubuntu20.04, jdk17
 
-support device: tplink
+support device: tplink, teltonika
 
 tested: tplink archer c7, tplink archer ax21
-
+        
+        teltonika RUT950, teltonika RUT230
 
 
 ## Usage

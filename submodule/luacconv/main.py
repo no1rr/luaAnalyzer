@@ -1,4 +1,5 @@
 import lua_tplink
+import lua_teltonika
 import lua_ori
 import argparse
 import os
@@ -6,9 +7,10 @@ import logging
 
 
 
-ORI_LUA    = 0
-XIAOMI_LUA = 1
-TPLINK_LUA = 2
+ORI_LUA         = 0
+XIAOMI_LUA      = 1
+TPLINK_LUA      = 2
+TELTONIKA_LUA   = 3
 
 def head_strip(data):
     if data[0] == b"#"[0]:
@@ -29,6 +31,8 @@ def check_lua_type(dev_name):
         return TPLINK_LUA
     elif dev_name == "xiaomi":
         return XIAOMI_LUA
+    elif dev_name == "teltonika":
+        return TELTONIKA_LUA
     else:
         return ORI_LUA
     
@@ -58,6 +62,10 @@ if __name__ == '__main__':
         header = lua_tplink.GlobalHead.parse(data)
         lua_tplink.lua_type_define(header)
         h = lua_tplink.Luac.parse(data)
+    elif lua_type == TELTONIKA_LUA:
+        header = lua_teltonika.GlobalHead.parse(data)
+        lua_teltonika.lua_type_define(header)
+        h = lua_teltonika.Luac.parse(data)
     else:
         pass 
     
@@ -65,6 +73,14 @@ if __name__ == '__main__':
         print(h)
     else:
         if lua_type == TPLINK_LUA:
+            # 32bit  
+            lua_ori.lua_type_set(4, 4, 8, 4)
+            h.global_head = lua_ori.GlobalHead.parse(
+                bytes([0x1B, 0x4C, 0x75, 0x61, 0x51, 0x00, 0x01, 0x04, 0x04, 0x04, 0x08, 0x00]))
+            d = lua_ori.Luac.build(h)
+            with open(outfile_path, 'wb') as fp:
+                fp.write(d)
+        elif lua_type == TELTONIKA_LUA:
             # 32bit  
             lua_ori.lua_type_set(4, 4, 8, 4)
             h.global_head = lua_ori.GlobalHead.parse(

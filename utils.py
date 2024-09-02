@@ -139,9 +139,15 @@ def conv_luac_tplink(path):
 def conv_luac_xiaomi(path):
     print("conv_luac_xiaomi not acc")
 
+def conv_luac_teltonika(path):
+    cmd = "python ./submodule/luacconv/main.py " + path + " -n teltonika -o " + path + ".correct" 
+    subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    log("convert file: %s ok"%path)
+    
 convs = {'official': conv_luac_official,
         'xiaomi'   : conv_luac_xiaomi,
-        'tplink'   : conv_luac_tplink
+        'tplink'   : conv_luac_tplink,
+        'teltonika': conv_luac_teltonika
 }
 
 

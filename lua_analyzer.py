@@ -30,7 +30,7 @@ if __name__ == "__main__":
     disc_group.add_argument('-use_chat', '-c', action='store_true', help='use chatgpt to discompile')
     disc_group.add_argument('-use_script', '-s', action='store_true', help='use custom script to discompile')
 
-    parser.add_argument('-dev_name', '-n', type=str, choices=['official', 'xiaomi', 'tplink'], help='device name', required=True)
+    parser.add_argument('-dev_name', '-n', type=str, choices=['official', 'xiaomi', 'tplink', 'teltonika'], help='device name', required=True)
     args = parser.parse_args()
 
     banner()
