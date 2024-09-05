@@ -7,39 +7,17 @@ import os
 import logging
 
 
-
-ORI_LUA         = 0
-XIAOMI_LUA      = 1
-TPLINK_LUA      = 2
-TELTONIKA_LUA   = 3
-UBIQUITI_LUA    = 4
+convs = {
+    "tplink"       : lua_tplink,
+    "teltonika"    : lua_teltonika,
+    "ubiquiti"     : lua_ubiquiti
+} 
 
 def head_strip(data):
     if data[0] == b"#"[0]:
         return data[data.find(b'\n') + 1:]
     else:
         return data
-
-def check_lua_type(dev_name):
-    # if data.startswith(b"\x1bFate/Z\x1b"):  # xiaomi lua
-    #     logging.warning("decode a xiaomi lua")
-    #     return MI_LUA
-    # elif data.startswith(b"\x1bLua"):
-    #     logging.warning("decode a origin lua")
-    #     return ORI_LUA
-    # else:
-    #     raise LuaDecodeException("unknown lua type")
-    if dev_name == "tplink":
-        return TPLINK_LUA
-    elif dev_name == "xiaomi":
-        return XIAOMI_LUA
-    elif dev_name == "teltonika":
-        return TELTONIKA_LUA
-    elif dev_name == "ubiquiti":
-        return UBIQUITI_LUA
-    else:
-        return ORI_LUA
-    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="translate luac with xiaomi and origin")
@@ -60,44 +38,17 @@ if __name__ == '__main__':
         data = fp.read()
     
     data = head_strip(data)
-    lua_type = check_lua_type(args.devname)
 
-    if lua_type == TPLINK_LUA:
-        header = lua_tplink.GlobalHead.parse(data)
-        lua_tplink.lua_type_define(header)
-        h = lua_tplink.Luac.parse(data)
-    elif lua_type == TELTONIKA_LUA:
-        header = lua_teltonika.GlobalHead.parse(data)
-        lua_teltonika.lua_type_define(header)
-        h = lua_teltonika.Luac.parse(data)
-    elif lua_type == UBIQUITI_LUA:
-        header = lua_ubiquiti.GlobalHead.parse(data)
-        lua_ubiquiti.lua_type_define(header)
-        h = lua_ubiquiti.Luac.parse(data)
-    else:
-        pass 
+    lua_conv = convs[args.devname]
+    header = lua_conv.GlobalHead.parse(data)
+    lua_conv.lua_type_define(header)
+    h = lua_conv.Luac.parse(data)
     
     if args.decode:
         print(h)
     else:
-        if lua_type == TPLINK_LUA:
-            # 32bit  
-            lua_ori.lua_type_set(4, 4, 8, 4)
-            h.global_head = lua_ori.GlobalHead.parse(
-                bytes([0x1B, 0x4C, 0x75, 0x61, 0x51, 0x00, 0x01, 0x04, 0x04, 0x04, 0x08, 0x00]))
-            d = lua_ori.Luac.build(h)
-            with open(outfile_path, 'wb') as fp:
-                fp.write(d)
-        elif lua_type == TELTONIKA_LUA:
-            # 32bit  
-            lua_ori.lua_type_set(4, 4, 8, 4)
-            h.global_head = lua_ori.GlobalHead.parse(
-                bytes([0x1B, 0x4C, 0x75, 0x61, 0x51, 0x00, 0x01, 0x04, 0x04, 0x04, 0x08, 0x00]))
-            d = lua_ori.Luac.build(h)
-            with open(outfile_path, 'wb') as fp:
-                fp.write(d)
-        elif lua_type == UBIQUITI_LUA:
-            # 32bit  
+        # 32 bit
+        if header.size_size_t == 4:
             lua_ori.lua_type_set(4, 4, 8, 4)
             h.global_head = lua_ori.GlobalHead.parse(
                 bytes([0x1B, 0x4C, 0x75, 0x61, 0x51, 0x00, 0x01, 0x04, 0x04, 0x04, 0x08, 0x00]))

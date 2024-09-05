@@ -4,7 +4,7 @@ result may not be correct.
 
 ubuntu20.04, jdk17
 
-support device: tplink, teltonika
+support device: tplink, teltonika, ubiquiti
 
 tested: 
 
@@ -12,21 +12,18 @@ tplink archer c7, tplink archer ax21
         
 teltonika RUT950, teltonika RUT230
 
+ubiquiti airos
 
 ## Usage
 
-do not use gpt.
-
-```
-python ./lua_analyzer.py -d ./squashfs-root -n tplink
-```
 
 
-use gpt.
+```
+python ./lua_analyzer.py -d ./squashfs-root -n device_name [-c]
+```
 
-```
-python ./lua_analyzer.py -d ./squashfs-root -c -n tplink
-```
+
+
 
 
 
