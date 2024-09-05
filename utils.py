@@ -14,6 +14,7 @@ from langchain.schema import HumanMessage
 
 thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=16)
 
+support_devices = ["tplink", "teltonika", "ubiquiti"]
 
 def log(msg):
     pass
@@ -126,32 +127,10 @@ def gen_psc_unluac(path):
     cmd = "java -jar ./submodule/unluac/src/unluac.jar " + path + ".correct > " + path + ".unluac"
     subprocess.run(cmd, shell=True, capture_output=True, text=True)
     log("gen_psc_unluac: %s ok"%path)
-    
-def conv_luac_official(path):
-    cmd = "python ./submodule/luacconv/main.py " + path + " -o " + path + ".correct" 
-    subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
-def conv_luac_tplink(path):
-    cmd = "python ./submodule/luacconv/main.py " + path + " -n tplink -o " + path + ".correct" 
+def conv_luac(dev_name, path):
+    cmd = "python ./submodule/luacconv/main.py " + path + " -n " + dev_name + " -o " + path + ".correct" 
     subprocess.run(cmd, shell=True, capture_output=True, text=True)
     log("convert file: %s ok"%path)
-
-def conv_luac_xiaomi(path):
-    print("conv_luac_xiaomi not acc")
-
-def conv_luac_teltonika(path):
-    cmd = "python ./submodule/luacconv/main.py " + path + " -n teltonika -o " + path + ".correct" 
-    subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    log("convert file: %s ok"%path)
-    
-convs = {'official': conv_luac_official,
-        'xiaomi'   : conv_luac_xiaomi,
-        'tplink'   : conv_luac_tplink,
-        'teltonika': conv_luac_teltonika
-}
-
-
-
-
 
     

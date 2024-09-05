@@ -30,7 +30,7 @@ if __name__ == "__main__":
     disc_group.add_argument('-use_chat', '-c', action='store_true', help='use chatgpt to discompile')
     disc_group.add_argument('-use_script', '-s', action='store_true', help='use custom script to discompile')
 
-    parser.add_argument('-dev_name', '-n', type=str, choices=['official', 'xiaomi', 'tplink', 'teltonika'], help='device name', required=True)
+    parser.add_argument('-dev_name', '-n', type=str, choices=utils.support_devices, help='device name', required=True)
     args = parser.parse_args()
 
     banner()
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     # step1. convert bytecode 
     print("step1. convert bytecode")
-    tasks = [thread_pool.submit(utils.convs[args.dev_name], file) for file in files]
+    tasks = [thread_pool.submit(utils.conv_luac, args.dev_name ,file) for file in files]
     for _ in tqdm(concurrent.futures.as_completed(tasks), total=len(tasks)):
         pass
     #concurrent.futures.wait(tasks)
