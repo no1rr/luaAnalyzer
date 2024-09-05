@@ -6,9 +6,11 @@ ubuntu20.04, jdk17
 
 support device: tplink, teltonika
 
-tested: tplink archer c7, tplink archer ax21
+tested: 
+
+tplink archer c7, tplink archer ax21
         
-        teltonika RUT950, teltonika RUT230
+teltonika RUT950, teltonika RUT230
 
 
 ## Usage
