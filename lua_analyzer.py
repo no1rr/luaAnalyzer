@@ -18,19 +18,19 @@ def banner():
                                       |___/
                                       ''')
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="convert custom luac to lua source")
     #disa_group = parser.add_mutually_exclusive_group(required=True)
     disc_group = parser.add_mutually_exclusive_group()
 
-    parser.add_argument('-fs_dir', '-d', type=str, help="firm filesystem directory", required=True)
+    parser.add_argument('-d', '-fs_dir', type=str, help="firm filesystem directory", required=True)
 
     # disa_group.add_argument('-use_unluac', '-u', action='store_true', help='use unluac to disassembly')
     # disa_group.add_argument('-use_luadec', '-l', action='store_true', help='use luadec to disassembly')
     
-    disc_group.add_argument('-use_chat', '-c', action='store_true', help='use chatgpt to discompile')
-    disc_group.add_argument('-use_script', '-s', action='store_true', help='use custom script to discompile')
+    disc_group.add_argument('-c', '-use_chat', action='store_true', help='use chatgpt to discompile')
+    disc_group.add_argument('-s', '-use_script', action='store_true', help='use custom script to discompile')
 
-    parser.add_argument('-dev_name', '-n', type=str, choices=utils.support_devices, help='device name', required=True)
+    parser.add_argument('-n', '-dev_name', type=str, choices=utils.support_devices, help='device name', required=True)
     args = parser.parse_args()
 
     banner()
