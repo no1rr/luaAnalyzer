@@ -14,7 +14,7 @@ from langchain.schema import HumanMessage
 
 thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=16)
 
-support_devices = ["tplink", "teltonika", "ubiquiti"]
+support_devices = ["tplink", "teltonika", "ubiquiti", "xiaomi"]
 
 def log(msg):
     pass

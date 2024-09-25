@@ -1,6 +1,7 @@
 import lua_tplink
 import lua_teltonika
 import lua_ubiquiti
+import lua_xiaomi
 import lua_ori
 import argparse
 import os
@@ -10,7 +11,8 @@ import logging
 convs = {
     "tplink"       : lua_tplink,
     "teltonika"    : lua_teltonika,
-    "ubiquiti"     : lua_ubiquiti
+    "ubiquiti"     : lua_ubiquiti,
+    "xiaomi"       : lua_xiaomi
 } 
 
 def head_strip(data):
