@@ -2,7 +2,7 @@ convert custom luac to lua source.
 
 result may not be correct. 
 
-ubuntu20.04, jdk17
+ubuntu20.04, openjdk 17.0.11 2024-04-16
 
 support device: tplink, teltonika, ubiquiti
 
