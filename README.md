@@ -12,7 +12,7 @@ teltonika RUT950, teltonika RUT230
 
 ubiquiti airos
 
-## env
+## Environment
 
 ubuntu20.04, openjdk 17.0.11 2024-04-16
 
