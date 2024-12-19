@@ -9,8 +9,6 @@ import requests
 import os
 import concurrent.futures
 import subprocess
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage
 
 thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=16)
 
@@ -19,6 +17,9 @@ support_devices = ["tplink", "teltonika", "ubiquiti", "xiaomi"]
 def log(msg):
     pass
 	#print("[*] \033[0;31m{}\033[0m".format(msg))
+
+with open('config.yml', 'r', encoding='utf-8') as file:
+    config = yaml.safe_load(file)
 
 def get_config(key):
     val = None
@@ -69,10 +70,26 @@ def make_request(url, headers=None, data=None, proxy_addr=None):
         print("Request timed out")
         quit("Exiting...")
 
-def chat_q(message):
-    output = llm([HumanMessage(content=message)])
-    return output.content
 
+def chat_grok(message):
+    url = "https://api.x.ai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {config['api_key']}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "grok-beta",
+        "messages": [{"role": "user", "content": message}]
+    }
+    if config['proxy']:
+        proxis = {
+            "https": f"{config['proxy']}"
+        }
+    else:
+        proxis = {}
+
+    response = requests.post(url, headers=headers, json=data, proxies=proxis)
+    return json.loads(response.text)["choices"][0]["message"]["content"]  
 
 def get_lua_files(fs_dir):
     log("getting lua files' path: " + fs_dir)
@@ -80,17 +97,9 @@ def get_lua_files(fs_dir):
     log("get lua file path ok")
     return lua_files
 
-llm = ChatOpenAI(
-    streaming=True,
-    verbose=True,
-    openai_api_key=get_config("api_key"),
-    openai_api_base=get_config("base_url"),  
-    model_name=get_config("model")
-)
-
 def disc_luac(path):
     bytecode_file_path = path + ".unluac"
-    chat_file_path     = path + ".chat.lua"
+    chat_file_path     = path + ".llm.lua"
     chat_file = open(chat_file_path, "w")
     data = None
 
@@ -98,7 +107,7 @@ def disc_luac(path):
         data = open(bytecode_file_path,"r").read()
     except:
         log("read dec file err: "+path)
-
+    
     if data:
         # whole file data is too long for one chat, split to functions
         functions = data.split("\nfunction ")
@@ -107,14 +116,14 @@ def disc_luac(path):
         global_vars = True
         for code in functions:
 
-            msg = '''下面是unluac还原的lua字节码，帮我还原成源代码，并把其中的变量重命名成合适变量名。\n\n'''
+            msg = '''下面是unluac反编译的代码，帮我还原成源代码，局部变量可以根据上下文重命名。只要返回代码，不要其他任何解释。\n\n'''
             if global_vars:
                 global_vars = False
             else:
                 msg += "function "
 
             msg += code
-            lua_source = chat_q(msg).split("```lua")[1].split("```")[0]
+            lua_source = chat_grok(msg).split("```lua")[1].split("```")[0]
             log("chat done: "+path)
             chat_file.write(lua_source+"\n")
             chat_file.flush()

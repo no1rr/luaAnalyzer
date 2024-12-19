@@ -1,8 +1,7 @@
-# for gpt
-base_url: private
-api_key: private
-model: private
+base_url: 
+api_key: xai-xxx
+model: grok-beta
 
-proxy: 127.0.0.1:7890
+proxy: http://127.0.0.1:7890
 
 thread_count: 32
